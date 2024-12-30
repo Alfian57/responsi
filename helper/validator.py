@@ -46,15 +46,20 @@ class Validator:
             return "tidak boleh kosong!"
 
     @staticmethod
-    def positive_integer(value: int) -> str:
-        is_valid = value > 0
-        if not is_valid:
-            return "harus bilangan bulat positif!"
+    def positive_integer(value: str) -> str:
+        try:
+            is_valid = int(value) > 0
+            if not is_valid:
+                return "harus bilangan bulat positif!"
+        except ValueError:
+            return "harus berupa angka!"
 
     @staticmethod
     def numeric(value: str) -> str:
-        is_valid = value.isdigit()
-        if not is_valid:
+        try:
+            int(value)
+            return None
+        except ValueError:
             return "harus berupa angka!"
 
     @staticmethod

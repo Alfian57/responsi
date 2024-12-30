@@ -3,7 +3,9 @@ from tkinter import Tk
 from ui.component.sidebar import Sidebar
 from constant.ui_constant import UIConstants as const
 from service.product_service import ProductService
+from service.transaction_service import TransactionService
 from ui.frame.product_frame import ProductFrame
+from ui.frame.transaction_frame import TransactionFrame
 
 
 class Dashboard:
@@ -26,6 +28,7 @@ class Dashboard:
 
     def setup_services(self):
         self.product_service = ProductService()
+        self.transaction_service = TransactionService()
 
     def setup_sidebar(self):
         self.show_products()
@@ -42,5 +45,5 @@ class Dashboard:
         product_frame.render()
 
     def show_transactions(self):
-        product_frame = ProductFrame(self.main_frame, self.product_service)
-        product_frame.render()
+        transaction_frame = TransactionFrame(self.main_frame, self.transaction_service)
+        transaction_frame.render()
