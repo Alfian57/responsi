@@ -50,6 +50,34 @@ class TransactionService:
         self.transaction_repository.add(transaction_dto)
         display_message("Transaksi berhasil ditambahkan!", "info")
 
+    def update_transaction(self, transaction_dto: TransactionDTO):
+        error_message = Validator.validate(
+            transaction_dto.__dict__,
+            {
+                "id_produk": [Validator.required, Validator.numeric],
+                "jumlah": [
+                    Validator.required,
+                    Validator.numeric,
+                    Validator.positive_integer,
+                ],
+            },
+            {
+                "id_produk": "ID Produk",
+                "jumlah": "Jumlah",
+            },
+        )
+        if error_message:
+            display_message(error_message, "error")
+            return
+
+        transaction_dto.total_harga = transaction_dto.produk.harga * Decimal(
+            transaction_dto.jumlah
+        )
+        transaction_dto.tanggal_transaksi = datetime.now().strftime("%Y-%m-%d")
+
+        self.transaction_repository.update(transaction_dto)
+        display_message("Transaksi berhasil diperbarui!", "info")
+
     def delete_transaction(self, transaction_dto: TransactionDTO):
         error_message = Validator.validate(
             transaction_dto.__dict__,

@@ -25,6 +25,7 @@ class TransactionFrame(Base):
         # Placeholder untuk tombol
         self.add_button = None
         self.delete_button = None
+        self.edit_button = None
 
         # Placeholder untuk form
         self.products = self.transaction_service.get_all_products()
@@ -113,6 +114,17 @@ class TransactionFrame(Base):
         )
         self.add_button.pack(side="left", padx=const.PADDING_SMALL)
 
+        self.edit_button = tk.Button(
+            button_frame,
+            text="Edit",
+            bg=const.COLOR_EDIT_BUTTON_BG,
+            fg=const.COLOR_BUTTON_TEXT,
+            font=(const.FONT_MAIN, const.FONT_SIZE_BUTTON),
+            relief=const.BUTTON_RELIEF,
+            command=self.edit_transaction,
+        )
+        self.edit_button.pack_forget()
+
         self.delete_button = tk.Button(
             button_frame,
             text="Hapus",
@@ -124,8 +136,9 @@ class TransactionFrame(Base):
         )
         self.delete_button.pack_forget()
 
+        # Export Button
         self.export_button = tk.Button(
-            button_frame,
+            self.master,
             text="Export",
             bg=const.COLOR_ADD_BUTTON_BG,
             fg=const.COLOR_BUTTON_TEXT,
@@ -133,7 +146,7 @@ class TransactionFrame(Base):
             relief=const.BUTTON_RELIEF,
             command=self.export_transactions,
         )
-        self.export_button.pack(side="left", padx=const.PADDING_SMALL)
+        self.export_button.pack(pady=const.PADDING_SMALL, anchor="w")
 
         # Buat tabel
         transactions = self.transaction_service.get_all_transactions()
@@ -164,15 +177,17 @@ class TransactionFrame(Base):
 
                 # Tampilkan tombol Edit dan Delete, sembunyikan Tambah
                 self.add_button.pack_forget()
+                self.edit_button.pack(side="left", padx=const.PADDING_SMALL)
                 self.delete_button.pack(side="left", padx=const.PADDING_SMALL)
             else:
                 self.reset_buttons()
 
     def reset_buttons(self):
         self.selected_item = None
-        self.product_var.set("")
+        self.product_var.set(self.product_var.get())
         self.transaction_quantity_entry.delete(0, tk.END)
 
+        self.edit_button.pack_forget()
         self.delete_button.pack_forget()
         self.add_button.pack(side="left", padx=const.PADDING_SMALL)
 
@@ -191,6 +206,23 @@ class TransactionFrame(Base):
             produk=product,
         )
         self.transaction_service.add_transaction(transaction_dto)
+
+        self.reset_buttons()
+        self.render()
+
+    def edit_transaction(self):
+        transaction_product_id = self.products_map.get(self.product_var.get().strip())
+        transaction_quantity = self.transaction_quantity_entry.get().strip()
+
+        product = self.transaction_service.get_product(transaction_product_id)
+
+        transaction_dto = TransactionDTO(
+            id_transaksi=self.selected_item,
+            id_produk=transaction_product_id,
+            jumlah=transaction_quantity,
+            produk=product,
+        )
+        self.transaction_service.update_transaction(transaction_dto)
 
         self.reset_buttons()
         self.render()
