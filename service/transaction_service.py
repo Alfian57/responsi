@@ -5,6 +5,7 @@ from helper.show_message import display_message
 from helper.validator import Validator
 from datetime import datetime
 from decimal import Decimal
+import xlsxwriter
 
 
 class TransactionService:
@@ -71,3 +72,28 @@ class TransactionService:
 
         self.transaction_repository.delete(transaction_dto.id_produk)
         display_message("Transaksi berhasil dihapus!", "info")
+
+    def export_transactions(self):
+
+        transactions = self.transaction_repository.get_all_with_product()
+        if not transactions:
+            display_message("Tidak ada data transaksi yang dapat diekspor!", "error")
+            return
+
+        workbook = xlsxwriter.Workbook("transactions.xlsx")
+        worksheet = workbook.add_worksheet()
+
+        headers = ["Nama Produk", "Jumlah", "Total Harga", "Tanggal Transaksi"]
+        for col_num, header in enumerate(headers):
+            worksheet.write(0, col_num, header)
+
+        for row_num, transaction in enumerate(transactions, start=1):
+            worksheet.write(row_num, 0, transaction.produk.nama_produk)
+            worksheet.write(row_num, 1, transaction.jumlah)
+            worksheet.write(row_num, 2, str(transaction.total_harga))
+            worksheet.write(row_num, 3, transaction.tanggal_transaksi)
+
+        workbook.close()
+        display_message(
+            "Data transaksi berhasil diekspor ke transactions.xlsx!", "info"
+        )

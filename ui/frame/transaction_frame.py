@@ -124,6 +124,17 @@ class TransactionFrame(Base):
         )
         self.delete_button.pack_forget()
 
+        self.export_button = tk.Button(
+            button_frame,
+            text="Export",
+            bg=const.COLOR_ADD_BUTTON_BG,
+            fg=const.COLOR_BUTTON_TEXT,
+            font=(const.FONT_MAIN, const.FONT_SIZE_BUTTON),
+            relief=const.BUTTON_RELIEF,
+            command=self.export_transactions,
+        )
+        self.export_button.pack(side="left", padx=const.PADDING_SMALL)
+
         # Buat tabel
         transactions = self.transaction_service.get_all_transactions()
         transactions = [
@@ -164,6 +175,9 @@ class TransactionFrame(Base):
 
         self.delete_button.pack_forget()
         self.add_button.pack(side="left", padx=const.PADDING_SMALL)
+
+    def export_transactions(self):
+        self.transaction_service.export_transactions()
 
     def add_transaction(self):
         transaction_product_id = self.products_map.get(self.product_var.get().strip())
