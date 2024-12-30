@@ -4,6 +4,9 @@ from app.db import DB
 from ui.dashboard import Dashboard
 
 
+# MOHON BACA FILE README.md UNTUK PENJELASAN LEBIH LANJUT
+
+
 def init():
     load_dotenv()
 
