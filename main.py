@@ -1,10 +1,7 @@
 import tkinter as tk
 from dotenv import load_dotenv
 from app.db import DB
-
-# from ui.login import Login
-
-# TOLONG BACA README.md UNTUK SETUP PROJECTNYA
+from ui.dashboard import Dashboard
 
 
 def init():
@@ -13,7 +10,7 @@ def init():
 
 def main():
     root = tk.Tk()
-    # Login(root)
+    Dashboard(root)
     root.mainloop()
 
 
